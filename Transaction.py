@@ -6,12 +6,11 @@ import Category
 
 class Transaction:
 
-    def __init__(self, name, amount, date, category, type):
-        self.name = name
+    def __init__(self, category, amount, date, transaction_type):
+        self.category = category
         self.amount = amount
         self.date = date
-        self.category = category
-        self.type = type
+        self.transaction_type = transaction_type
 
 
 
