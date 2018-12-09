@@ -10,7 +10,7 @@ class Transaction:
         self.name = name
         self.amount = amount
         self.date = date
-        self.category = Category
+        self.category = category
         self.type = type
 
 
