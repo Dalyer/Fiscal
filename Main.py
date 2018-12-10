@@ -15,11 +15,13 @@ DATE_RANGE = ''
 
 ########HELPER FUNCTIONS##############
 
+
 def convert_string_list_to_int(list):
     new_list = []
     for i in list:
         new_list.append(int(i))
     return new_list
+
 
 # open files
 dirName = os.getcwd()
@@ -28,9 +30,13 @@ debit_file = os.path.join(dirName, DEBIT_FILE_NAME)
 credit_file = os.path.join(dirName, CREDIT_FILE_NAME)
 
 # create a list of all unsorted transactions
-unsorted_debit_transactions = (open(debit_file, encoding='utf-8', mode='r')).readlines()
-unsorted_credit_transactions = (open(credit_file, encoding='utf-8', mode='r')).readlines()
-
+debitFile = open(debit_file, encoding='utf-8', mode='r')
+creditFile = open(credit_file, encoding='utf-8', mode='r')
+unsorted_debit_transactions = debitFile.readlines()
+unsorted_credit_transactions = creditFile.readlines()
+# close files
+debitFile.close()
+creditFile.close()
 # dates from datetime work as year, month, day, hour, minute, second
 
 sorted_debit_transactions = []
@@ -67,6 +73,32 @@ for line in sorted_debit_transactions:
     sorted_debit_trans_classes.append(Transaction.Transaction(trans_category, trans_amount, trans_date, trans_type))
 
 
+# credit transactions
+# dates are sorted month day year
+# mastercard displays, as Item #,Card #,Transaction Date,Posting Date,Transaction Amount,Description
+sorted_credit_trans_classes = []
+for line in sorted_credit_transactions:
+    # find the proper trans_date and format
+    temp = line[2]
+    trans_date = date(int(temp[0:4]), int(temp[4:6]), int(temp[6:8]))
+    # find the trans_category
+    trans_category = line[5]  # fix this later so that its a proper category class
+    # find the trans_amount (fix this its terrible)
+    trans_amount = float(line[4])
+    if trans_amount >= 0:
+        trans_type = 'Expense'
+    else:
+        trans_type = 'Payment'
+
+    # make transaction and add it to the list
+    sorted_credit_trans_classes.append(Transaction.Transaction(trans_category, trans_amount, trans_date, trans_type))
+
+
+# # TODO
+# Add the user interface for determining what category a item belongs in
+# add a text file that stores all the common categories
+
+
 
 
 
@@ -78,7 +110,9 @@ for line in sorted_debit_transactions:
 
 
 #########TESTS#############
-x = sorted_debit_trans_classes[0]
+x = sorted_credit_trans_classes[0]
 print(x)
 print(x.category)
 print(x.date)
+
+
