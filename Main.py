@@ -104,9 +104,30 @@ for line in sorted_credit_transactions:
 
 # Method for creating categories
 
-categoryFile = open(categories_file, encoding='utf-8', mode='r+')
-categories = categoryFile.readlines()
-# remember to close the categories_file when down with it
+
+# use Category class
+
+def load_cat():
+    categoryFile = open(categories_file, encoding='utf-8', mode='r+')
+    categories = []
+    for line in categoryFile.readlines():
+        categories.append(Category.Category(line))
+    categoryFile.close()
+    return categories
+
+
+def update_cat(cat_arr,new_cat):
+    if new_cat in categories:
+        print("Category already exists. If you get this message there was a big error")
+        # TODO replace with a proper error class and handler
+    else:
+        categoryFile = open(categories_file, encoding='utf-8', mode='r+')
+        categoryFile.write("\n" + new_cat)
+        categoryFile.close()
+        cat_arr.append(new_cat)
+
+# function for adding categories into the categories file
+
 
 
 
@@ -115,4 +136,6 @@ categories = categoryFile.readlines()
 # print(x)
 # print(x.category)
 # print(x.date)
-print(categories[0])
+
+# print(categories[0].name)
+# categoryFile.close()
