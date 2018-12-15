@@ -11,6 +11,7 @@ import string
 ############## INFORMATION ###################
 DEBIT_FILE_NAME = 'debit_test.csv'
 CREDIT_FILE_NAME = 'credit_test.csv'
+CATEGORY_FILE_NAME = 'categories.txt'
 DATE_RANGE = ''
 
 ########HELPER FUNCTIONS##############
@@ -28,12 +29,15 @@ dirName = os.getcwd()
 
 debit_file = os.path.join(dirName, DEBIT_FILE_NAME)
 credit_file = os.path.join(dirName, CREDIT_FILE_NAME)
+categories_file = os.path.join(dirName, CATEGORY_FILE_NAME)
 
 # create a list of all unsorted transactions
 debitFile = open(debit_file, encoding='utf-8', mode='r')
 creditFile = open(credit_file, encoding='utf-8', mode='r')
 unsorted_debit_transactions = debitFile.readlines()
 unsorted_credit_transactions = creditFile.readlines()
+
+
 # close files
 debitFile.close()
 creditFile.close()
@@ -98,21 +102,17 @@ for line in sorted_credit_transactions:
 # Add the user interface for determining what category a item belongs in
 # add a text file that stores all the common categories
 
+# Method for creating categories
 
-
-
-
-
-
-
-
+categoryFile = open(categories_file, encoding='utf-8', mode='r+')
+categories = categoryFile.readlines()
+# remember to close the categories_file when down with it
 
 
 
 #########TESTS#############
-x = sorted_credit_trans_classes[0]
-print(x)
-print(x.category)
-print(x.date)
-
-
+# x = sorted_credit_trans_classes[0]
+# print(x)
+# print(x.category)
+# print(x.date)
+print(categories[0])
