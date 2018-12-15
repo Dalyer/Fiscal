@@ -43,6 +43,7 @@ def convert_string_list_to_int(list):
 
 # FUNCTIONS
 def get_debit():
+    print("Loading debit transactions...\n")
     sorted_debit_transactions = []
     for line in unsorted_debit_transactions:
         clean_line = [i.strip() for i in line.split(',')]
@@ -70,6 +71,7 @@ def get_debit():
 
 
 def get_credit():
+    print("Loading credit transactions...\n")
     sorted_credit_transactions = []
     for line in unsorted_credit_transactions:
         clean_line = [i.strip() for i in line.split(',')]
@@ -97,14 +99,6 @@ def get_credit():
 
     return sorted_credit_trans_classes
 
-# # TODO
-# Add the user interface for determining what category a item belongs in
-# add a text file that stores all the common categories
-
-# Method for creating categories
-
-
-# use Category class
 
 # load on initial script start
 def load_cat():
@@ -129,11 +123,14 @@ def update_cat(cat_arr, new_cat):
         cat_arr.append(new_cat)
 
 
+def get_category():
+    pass  # TODO add a category matcher that finds if titles have the same name exactly they can be put in the category other wise the user will be prompted to find a name for it
+
+
 def run():
     print("Starting...")
     all_cat = load_cat()
     debit_trans = get_debit()
-    print("Getting matching categories\n")
 
 
 
@@ -145,7 +142,9 @@ def run():
 
 # print(categories[0].name)
 # categoryFile.close()
-x = get_credit()
-print(x[0].date)
+# x = get_credit()
+# print(x[0].date)
+
+# ############## MAIN LOOP ############ #
 
 
