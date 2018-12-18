@@ -13,6 +13,7 @@ DEBIT_FILE_NAME = 'debit_test.csv'
 CREDIT_FILE_NAME = 'credit_test.csv'
 CATEGORY_FILE_NAME = 'categories.txt'
 DATE_RANGE = ''
+EARLIEST_YEAR = 2015
 
 
 # open files
@@ -135,9 +136,70 @@ def run():
     all_cat = load_cat()
     debit_trans = get_debit()
     credit_trans = get_credit()
-    # TODO add date range input prompt
 
     all_trans = debit_trans + credit_trans
+
+    # TODO make these loops a get_input function or something
+    # ask for start date
+    while True:
+
+        # starting date
+        print("Enter the starting date for sorting\nUse the form YEAR-MM-DAY")
+        date_range = input("> ")
+        try:
+            #test for proper date forms
+            date_range = date_range.split("-")
+            input_year = int(date_range[0])
+            input_month = int(date_range[1])
+            input_day = int(date_range[2])
+        except IndexError:
+            print("Improper date format used")
+
+        # make sure input year isnt in the future
+        if input_year > date.today().year or input_year < EARLIEST_YEAR:
+            print("Invalid year")
+            continue
+        elif input_month > 12 or input_month <= 0:
+            print("Invalid month")
+            continue
+        elif input_day > 31 or input_day < 0:
+            print("Invalid day")
+            continue
+        else:
+            start_date = date(input_year, input_month, input_day)
+            break
+
+    # end date
+    while True:
+
+        # starting date
+        print("Enter the end date for sorting\nUse the form YEAR-MM-DAY")
+        date_range = input("> ")
+        try:
+            #test for proper date forms
+            date_range = date_range.split("-")
+            input_year = int(date_range[0])
+            input_month = int(date_range[1])
+            input_day = int(date_range[2])
+        except IndexError:
+            print("Improper date format used")
+        # make sure input year isnt in the future
+        if input_year > date.today().year or input_year < EARLIEST_YEAR:
+            print("Invalid year")
+            continue
+        elif input_month > 12 or input_month <= 0:
+            print("Invalid month")
+            continue
+        elif input_day > 31 or input_day < 0:
+            print("Invalid day")
+            continue
+        else:
+            end_date = date(input_year, input_month, input_day)
+            if end_date <= start_date:
+                print("End date must be after start date")
+                exit()
+            break
+
     # tests
     # all_trans[0].category = Category.Category("Food")
     # print(all_trans[0].category.name)
