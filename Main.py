@@ -43,7 +43,7 @@ def convert_string_list_to_int(list):
 
 # FUNCTIONS
 def get_debit():
-    print("Loading debit transactions...\n")
+    print("Loading debit transactions...")
     sorted_debit_transactions = []
     for line in unsorted_debit_transactions:
         clean_line = [i.strip() for i in line.split(',')]
@@ -56,7 +56,7 @@ def get_debit():
         temp = convert_string_list_to_int([i.strip() for i in line[0].split('/')])
         trans_date = date(temp[2], temp[0], temp[1])
         # find the trans_amountx
-        trans_category = line[1]  # fix this later so that its a proper category class
+        trans_description = line[1]  # fix this later so that its a proper category class
         # find the trans_amount (fix this its terrible)
         if line[2] != '':
             trans_amount = float(line[2])
@@ -66,12 +66,12 @@ def get_debit():
             trans_type = 'Expense'
 
         # make transaction and add it to the list
-        sorted_debit_trans_classes.append(Transaction.Transaction(trans_category, trans_amount, trans_date, trans_type))
+        sorted_debit_trans_classes.append(Transaction.Transaction(trans_description, trans_amount, trans_date, trans_type))
         return sorted_debit_trans_classes
 
 
 def get_credit():
-    print("Loading credit transactions...\n")
+    print("Loading credit transactions...")
     sorted_credit_transactions = []
     for line in unsorted_credit_transactions:
         clean_line = [i.strip() for i in line.split(',')]
@@ -84,8 +84,8 @@ def get_credit():
         # find the proper trans_date and format
         temp = line[2]
         trans_date = date(int(temp[0:4]), int(temp[4:6]), int(temp[6:8]))
-        # find the trans_category
-        trans_category = line[5]  # fix this later so that its a proper category class
+        # find the trans_description
+        trans_description = line[5]  # fix this later so that its a proper category class
         # find the trans_amount (fix this its terrible)
         trans_amount = float(line[4])
         if trans_amount >= 0:
@@ -95,14 +95,14 @@ def get_credit():
 
         # make transaction and add it to the list
         sorted_credit_trans_classes.append(
-            Transaction.Transaction(trans_category, trans_amount, trans_date, trans_type))
+            Transaction.Transaction(trans_description, trans_amount, trans_date, trans_type))
 
     return sorted_credit_trans_classes
 
 
 # load on initial script start
 def load_cat():
-    print("Loading categories\n")
+    print("Loading categories...")
     categoryFile = open(categories_file, encoding='utf-8', mode='r+')
     categories = []
     for line in categoryFile.readlines():
@@ -121,6 +121,8 @@ def update_cat(cat_arr, new_cat):
         categoryFile.write("\n" + new_cat)
         categoryFile.close()
         cat_arr.append(new_cat)
+        print("New category added")
+        return cat_arr
 
 
 def get_category():
@@ -131,6 +133,44 @@ def run():
     print("Starting...")
     all_cat = load_cat()
     debit_trans = get_debit()
+    credit_trans = get_credit()
+
+    all_trans = debit_trans + credit_trans
+    # tests
+    # all_trans[0].category = Category.Category("Food")
+    # print(all_trans[0].category.name)
+
+    # get the category for each transaction
+    for transaction in all_trans:
+        # check if it is a pre-existing category
+        if transaction.description in all_cat:
+            print("Category already found automatically")
+        else:
+            # get user input on what category it should be
+            user_input = input("What category should the following "
+                               "transaction be filed under: %s\n> " % transaction.description)
+            user_input.capitalize()
+            if user_input not in all_cat:
+                transaction.category = Category.Category(user_input)
+                all_cat = update_cat(all_cat, user_input)
+            else:
+                print("Added to already existing category")
+                transaction.category = Category.Category(user_input)
+
+    print("All transactions categorized")
+
+    # main loop
+    # while True:
+    #     # c
+    #
+    #     # break condition
+    #     print("Break?\n")
+    #     x = input("> ")
+    #     x.capitalize()
+    #     if x == "YES":
+    #         break
+
+
 
 
 
@@ -144,6 +184,11 @@ def run():
 # categoryFile.close()
 # x = get_credit()
 # print(x[0].date)
+
+
+run()
+
+
 
 # ############## MAIN LOOP ############ #
 
