@@ -42,7 +42,7 @@ def convert_string_list_to_int(list):
 
 
 # FUNCTIONS
-def get_debit():
+def get_debit():    # TODO add date Range
     print("Loading debit transactions...")
     sorted_debit_transactions = []
     for line in unsorted_debit_transactions:
@@ -70,7 +70,7 @@ def get_debit():
         return sorted_debit_trans_classes
 
 
-def get_credit():
+def get_credit():   # TODO add date range
     print("Loading credit transactions...")
     sorted_credit_transactions = []
     for line in unsorted_credit_transactions:
@@ -126,7 +126,8 @@ def update_cat(cat_arr, new_cat):
 
 
 def get_category():
-    pass  # TODO add a category matcher that finds if titles have the same name exactly they can be put in the category other wise the user will be prompted to find a name for it
+    pass  # TODO add a category matcher that finds if titles have the same name exactly they can be put
+    # in the category other wise the user will be prompted to find a name for it
 
 
 def run():
@@ -134,6 +135,7 @@ def run():
     all_cat = load_cat()
     debit_trans = get_debit()
     credit_trans = get_credit()
+    # TODO add date range input prompt
 
     all_trans = debit_trans + credit_trans
     # tests
