@@ -7,7 +7,7 @@ import Transaction
 import Category
 from datetime import date
 import datetime
-import string
+import xlsxwriter
 
 ############## INFORMATION ###################
 DEBIT_FILE_NAME = 'debit_test.csv'
@@ -44,7 +44,7 @@ def convert_string_list_to_int(list):
 
 
 # FUNCTIONS
-def get_debit(date_range):    # TODO add date Range
+def get_debit(date_range):
     print("Loading debit transactions...")
     sorted_debit_transactions = []
     for line in unsorted_debit_transactions:
@@ -76,7 +76,7 @@ def get_debit(date_range):    # TODO add date Range
     return sorted_debit_trans_classes
 
 
-def get_credit(date_range):   # TODO add date range
+def get_credit(date_range):
     print("Loading credit transactions...")
     sorted_credit_transactions = []
     for line in unsorted_credit_transactions:
@@ -223,16 +223,13 @@ def run():
 
     print("All transactions categorized")
 
-    # main loop
-    # while True:
-    #     # c
-    #
-    #     # break condition
-    #     print("Break?\n")
-    #     x = input("> ")
-    #     x.capitalize()
-    #     if x == "YES":
-    #         break
+
+# make the excel spreadsheet
+def get_spreadsheet(trans_all):
+    # TODO FINISH THIS with xlsxwriter
+    workbook = xlsxwriter.Workbook('test_worksheet.xlsx')   # creates a new excel file if one by that name doesn't exist
+    worksheet = workbook.add_worksheet()    # adds a tab
+    workbook.close()
 
 
 
@@ -248,9 +245,9 @@ def run():
 # categoryFile.close()
 # x = get_credit()
 # print(x[0].date)
-
-run()
-
+x = [1, 2, 3]
+# run()
+get_spreadsheet(x)
 
 
 
