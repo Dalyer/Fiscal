@@ -174,7 +174,7 @@ def run():
         print("Enter the end date for sorting\nUse the form YEAR-MM-DAY")
         date_range = input("> ")
         try:
-            #test for proper date forms
+            # test for proper date forms
             date_range = date_range.split("-")
             input_year = int(date_range[0])
             input_month = int(date_range[1])
@@ -232,9 +232,6 @@ def get_spreadsheet(trans_all):
     workbook.close()
 
 
-
-
-
 # ########TESTS############ #
 # x = sorted_credit_trans_classes[0]
 # print(x)
@@ -247,10 +244,7 @@ def get_spreadsheet(trans_all):
 # print(x[0].date)
 x = [1, 2, 3]
 # run()
-get_spreadsheet(x)
-
+# get_spreadsheet(x)
 
 
 # ############## MAIN LOOP ############ #
-
-
