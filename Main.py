@@ -227,9 +227,8 @@ def run():
 
 
 # make the excel spreadsheet
-def get_spreadsheet(trans_all):
+def get_spreadsheet(trans_all, date_range):
     # TODO FINISH THIS with xlsxwriter
-    date_range = "filler variable" # TODO make proper date_range as a function argument
 
     workbook = xlsxwriter.Workbook('test_worksheet.xlsx')   # creates a new excel file if one by that name doesn't exist
     worksheet = workbook.add_worksheet()    # adds a tab
@@ -264,19 +263,18 @@ def get_spreadsheet(trans_all):
 
 
 # ########TESTS############ #
-# x = sorted_credit_trans_classes[0]
-# print(x)
-# print(x.category)
-# print(x.date)
 
-# print(categories[0].name)
-# categoryFile.close()
-# x = get_credit()
-# print(x[0].date)
-a = [date(2018, 1, 2), date(2018, 1, 3)]
-x = get_debit(a)
-# run()
-get_spreadsheet(x)
+# Test data set
+test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "Expense")
+test_trans_2 = Transaction.Transaction("Walmart test crap", 10.99, date(2018, 1, 2), "Expense")
+test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "Expense")
+test_trans_1.category = Category.Category("Food")
+test_trans_2.category = Category.Category("Toiletries")
+test_trans_3.category = Category.Category("Clothes")
+test_trans_all = [test_trans_1, test_trans_2, test_trans_3]
+
+test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
+get_spreadsheet(test_trans_all, test_date_range)
 
 
 # ############## MAIN LOOP ############ #
