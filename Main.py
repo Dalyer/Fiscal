@@ -13,6 +13,7 @@ import xlsxwriter
 DEBIT_FILE_NAME = 'debit_test.csv'
 CREDIT_FILE_NAME = 'credit_test.csv'
 CATEGORY_FILE_NAME = 'categories.txt'
+TRANSACTIONS_FILE_NAME = 'all_trans_categorized.txt'
 DATE_RANGE = ''
 EARLIEST_YEAR = 2015
 MONTHS = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug',
@@ -25,6 +26,7 @@ dirName = os.getcwd()
 debit_file = os.path.join(dirName, DEBIT_FILE_NAME)
 credit_file = os.path.join(dirName, CREDIT_FILE_NAME)
 categories_file = os.path.join(dirName, CATEGORY_FILE_NAME)
+all_trans_file = os.path.join(dirName, TRANSACTIONS_FILE_NAME)
 
 # create a list of all unsorted transactions
 debitFile = open(debit_file, encoding='utf-8', mode='r')
@@ -113,7 +115,7 @@ def get_credit(date_range):
 # load on initial script start
 def load_cat():
     print("Loading categories...")
-    categoryFile = open(categories_file, encoding='utf-8', mode='r+')
+    categoryFile = open(categories_file, encoding='utf-8', mode='a+')
     categories = []
     for line in categoryFile.readlines():
         categories.append(Category.Category(line))
@@ -127,8 +129,8 @@ def update_cat(cat_arr, new_cat):
         print("Category already exists. If you get this message there was a big error\n")
         # TODO replace with a proper error class and handler
     else:
-        categoryFile = open(categories_file, encoding='utf-8', mode='r+')
-        categoryFile.write("\n" + new_cat)
+        categoryFile = open(categories_file, encoding='utf-8', mode='a+')
+        categoryFile.write(new_cat + "\n")
         categoryFile.close()
         cat_arr.append(new_cat)
         print("New category added")
@@ -147,7 +149,7 @@ def run():
         print("Enter the starting date for sorting\nUse the form YEAR-MM-DAY")
         date_range = input("> ")
         try:
-            #test for proper date forms
+            # test for proper date forms
             date_range = date_range.split("-")
             input_year = int(date_range[0])
             input_month = int(date_range[1])
@@ -209,13 +211,13 @@ def run():
     # get the category for each transaction
     for transaction in all_trans:
         # check if it is a pre-existing category
-        if transaction.description in all_cat:
+        if transaction.description in all_cat:      # TODO this makes zero sense
             print("Category already found automatically")
         else:
             # get user input on what category it should be
             user_input = input("What category should the following "
                                "transaction be filed under: %s\n> " % transaction.description)
-            user_input.upper()
+            user_input = user_input.upper()
             if user_input not in all_cat:
                 transaction.category = Category.Category(user_input)
                 all_cat = update_cat(all_cat, user_input)
@@ -224,6 +226,19 @@ def run():
                 transaction.category = Category.Category(user_input)
 
     print("All transactions categorized")
+
+    # save all transaction in a text file for easy recovery and testing later
+    allTransFile = open(all_trans_file, encoding='utf-8', mode='a+')
+    all_trans.sort(key=sort_by_date)
+    for transaction in all_trans:
+        allTransFile.write(transaction.description + "," + str(transaction.amount) + "," + str(transaction.date) + ","
+                           + transaction.transaction_type + "," + transaction.category.name + "\n")
+    print("All transactions with categories saved")
+    allTransFile.close()
+
+
+def sort_by_date(trans):
+    return trans.date
 
 
 # make the excel spreadsheet
@@ -260,14 +275,13 @@ def get_spreadsheet(trans_all, date_range):
     for i in range(14):
         worksheet.write_blank(2, i + 1, None, income_format)  # TODO make 14 the total number of transactions or whatever
 
-
     # close the workbook
     workbook.close()
 
 
 # ########TESTS############ #
 
-# Test data set
+# # Test data set
 test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "Expense")
 test_trans_2 = Transaction.Transaction("Walmart test crap", 10.99, date(2018, 1, 2), "Expense")
 test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "Expense")
@@ -279,5 +293,6 @@ test_trans_all = [test_trans_1, test_trans_2, test_trans_3]
 test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
 get_spreadsheet(test_trans_all, test_date_range)
 
+run()
 
 # ############## MAIN LOOP ############ #
