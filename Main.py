@@ -15,6 +15,8 @@ CREDIT_FILE_NAME = 'credit_test.csv'
 CATEGORY_FILE_NAME = 'categories.txt'
 DATE_RANGE = ''
 EARLIEST_YEAR = 2015
+MONTHS = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug',
+          'Sept', 'Oct', 'Nov', 'Dec']
 
 
 # open files
@@ -227,8 +229,30 @@ def run():
 # make the excel spreadsheet
 def get_spreadsheet(trans_all):
     # TODO FINISH THIS with xlsxwriter
+    date_range = "filler variable" # TODO make proper date_range as a function argument
+
     workbook = xlsxwriter.Workbook('test_worksheet.xlsx')   # creates a new excel file if one by that name doesn't exist
     worksheet = workbook.add_worksheet()    # adds a tab
+
+    # set column and row widths and heights TODO make this done by indexing by the total number of transactions
+    worksheet.set_column('A:A', 15)     # title column
+    worksheet.set_column('B:M', 10)     # month columns
+    worksheet.set_column('N:O', 15)     # totals and averages
+
+    # Formats for different cell types
+    main_title_format = workbook.add_format({'bold': True, 'underline': True, 'font_size': 15})
+    month_format = workbook.add_format({'font_size': 15, 'bg_color': 'B3FF79'})
+
+    # Title
+    worksheet.write('A1', "Finances", main_title_format)
+    worksheet.write('B1', date_range)
+
+    # Months header
+    worksheet.write_row('B2', MONTHS, month_format)
+    worksheet.write('N2', "Total Yearly", month_format)
+    worksheet.write('O2', "Averages", month_format)
+
+    # close the workbook
     workbook.close()
 
 
@@ -242,9 +266,10 @@ def get_spreadsheet(trans_all):
 # categoryFile.close()
 # x = get_credit()
 # print(x[0].date)
-x = [1, 2, 3]
+a = [date(2018, 1, 2), date(2018, 1, 3)]
+x = get_debit(a)
 # run()
-# get_spreadsheet(x)
+get_spreadsheet(x)
 
 
 # ############## MAIN LOOP ############ #
