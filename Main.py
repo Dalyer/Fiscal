@@ -68,10 +68,10 @@ def get_debit(date_range):
         # find the trans_amount (fix this its terrible)
         if line[2] != '':
             trans_amount = float(line[2])
-            trans_type = 'Income'
+            trans_type = 'EXPENSE'
         else:
             trans_amount = float(line[3])
-            trans_type = 'Expense'
+            trans_type = 'INCOME'
 
         # make transaction and add it to the list
         sorted_debit_trans_classes.append(Transaction.Transaction(trans_description,
@@ -101,9 +101,9 @@ def get_credit(date_range):
         # find the trans_amount (fix this its terrible)
         trans_amount = float(line[4])
         if trans_amount >= 0:
-            trans_type = 'Expense'
+            trans_type = 'EXPENSE'
         else:
-            trans_type = 'Payment'
+            trans_type = 'INCOME'
 
         # make transaction and add it to the list
         sorted_credit_trans_classes.append(
@@ -250,6 +250,17 @@ def get_spreadsheet(trans_all, date_range):
     all_cat = load_cat()
     num_rows = len(all_cat) + 8     # 8 is the number of extra formatting rows
 
+    # separate all income transactions and expense transactions
+    income_trans = []
+    expense_trans = []
+    for trans in trans_all:
+        if trans.transaction_type == 'INCOME':
+            income_trans.append(trans)
+        elif trans.transaction_type == 'EXPENSE':
+            expense_trans.append(trans)
+        else:
+            print("An error has occurred (get_spreadsheet)")
+
     # set column and row widths and heights TODO make this done by indexing by the total number of transactions
     worksheet_one.set_column('A:A', 15)     # title column
     worksheet_one.set_column('B:M', 10)     # month columns
@@ -260,6 +271,14 @@ def get_spreadsheet(trans_all, date_range):
     date_format = workbook.add_format({'num_format': 'dd-mm-yyyy'})
     month_format = workbook.add_format({'font_size': 15, 'bg_color': 'B3FF79'})
     income_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '46C732'})
+    income_total_format = workbook.add_format({'bold': True, 'font_size': 11,
+                                               'font_color': 'white', 'bg_color': '46C732'})
+    expense_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': 'F5352E'})
+    savings_format = workbook.add_format({'font_size': 11, 'font_color': 'white','bg_color': 'F5AC2E'})
+    percentage_savings_format = workbook.add_format({'bold': True, 'num_format': '0.00%', 'font_size': 11,
+                                                     'font_color': 'white', 'bg_color': '15BA30'})
+    category_row_format = workbook.add_format({'font_size': 11})
+    money_format = workbook.add_format({'font_size': 11, 'num_format': '0.00'})
 
     # Title
     worksheet_one.write('A1', "Finances", main_title_format)
