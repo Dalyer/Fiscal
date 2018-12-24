@@ -242,6 +242,7 @@ def get_spreadsheet(trans_all):
     # Formats for different cell types
     main_title_format = workbook.add_format({'bold': True, 'underline': True, 'font_size': 15})
     month_format = workbook.add_format({'font_size': 15, 'bg_color': 'B3FF79'})
+    income_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '46C732'})
 
     # Title
     worksheet.write('A1', "Finances", main_title_format)
@@ -251,6 +252,12 @@ def get_spreadsheet(trans_all):
     worksheet.write_row('B2', MONTHS, month_format)
     worksheet.write('N2', "Total Yearly", month_format)
     worksheet.write('O2', "Averages", month_format)
+
+    # income header
+    worksheet.write('A3', "Income", income_format)
+    for i in range(14):
+        worksheet.write_blank(2, i + 1, None, income_format)  # TODO make 14 the total number of transactions or whatever
+
 
     # close the workbook
     workbook.close()
