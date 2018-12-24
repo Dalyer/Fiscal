@@ -313,8 +313,8 @@ def get_spreadsheet(trans_all, date_range):
 
     # expense and expense total rows
     for i in range(len_expense):
-        worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
-    worksheet.write(len_expense + len_income + 4, 0, "Total Expenses", expense_total_format)
+        worksheet.write(i + len_income + 5, 0, expense_trans[i].category.name, category_row_format)
+    worksheet.write(len_expense + len_income + 5, 0, "Total Expenses", expense_total_format)
 
     # close the workbook
     workbook.close()
