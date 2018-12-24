@@ -240,12 +240,15 @@ def get_spreadsheet(trans_all, date_range):
 
     # Formats for different cell types
     main_title_format = workbook.add_format({'bold': True, 'underline': True, 'font_size': 15})
+    date_format = workbook.add_format({'num_format': 'dd-mm-yyyy'})
     month_format = workbook.add_format({'font_size': 15, 'bg_color': 'B3FF79'})
     income_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '46C732'})
 
     # Title
     worksheet.write('A1', "Finances", main_title_format)
-    worksheet.write('B1', date_range)
+    print(date_range[0])
+    worksheet.write_datetime('B1', date_range[0], date_format)
+    worksheet.write_datetime('C1', date_range[-1], date_format)
 
     # Months header
     worksheet.write_row('B2', MONTHS, month_format)
