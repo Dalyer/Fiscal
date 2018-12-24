@@ -245,13 +245,15 @@ def sort_by_date(trans):
 def get_spreadsheet(trans_all, date_range):
     # TODO FINISH THIS with xlsxwriter
 
-    workbook = xlsxwriter.Workbook('test_worksheet.xlsx')   # creates a new excel file if one by that name doesn't exist
-    worksheet = workbook.add_worksheet()    # adds a tab
+    workbook = xlsxwriter.Workbook('test_worksheet.xlsx')  # creates a new excel file if one by that name doesn't exist
+    worksheet_one = workbook.add_worksheet()    # adds a tab
+    all_cat = load_cat()
+    num_rows = len(all_cat) + 8     # 8 is the number of extra formatting rows
 
     # set column and row widths and heights TODO make this done by indexing by the total number of transactions
-    worksheet.set_column('A:A', 15)     # title column
-    worksheet.set_column('B:M', 10)     # month columns
-    worksheet.set_column('N:O', 15)     # totals and averages
+    worksheet_one.set_column('A:A', 15)     # title column
+    worksheet_one.set_column('B:M', 10)     # month columns
+    worksheet_one.set_column('N:O', 15)     # totals and averages
 
     # Formats for different cell types
     main_title_format = workbook.add_format({'bold': True, 'underline': True, 'font_size': 15})
@@ -260,20 +262,20 @@ def get_spreadsheet(trans_all, date_range):
     income_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '46C732'})
 
     # Title
-    worksheet.write('A1', "Finances", main_title_format)
+    worksheet_one.write('A1', "Finances", main_title_format)
     print(date_range[0])
-    worksheet.write_datetime('B1', date_range[0], date_format)
-    worksheet.write_datetime('C1', date_range[-1], date_format)
+    worksheet_one.write_datetime('B1', date_range[0], date_format)
+    worksheet_one.write_datetime('C1', date_range[-1], date_format)
 
     # Months header
-    worksheet.write_row('B2', MONTHS, month_format)
-    worksheet.write('N2', "Total Yearly", month_format)
-    worksheet.write('O2', "Averages", month_format)
+    worksheet_one.write_row('B2', MONTHS, month_format)
+    worksheet_one.write('N2', "Total Yearly", month_format)
+    worksheet_one.write('O2', "Averages", month_format)
 
     # income header
-    worksheet.write('A3', "Income", income_format)
+    worksheet_one.write('A3', "Income", income_format)
     for i in range(14):
-        worksheet.write_blank(2, i + 1, None, income_format)  # TODO make 14 the total number of transactions or whatever
+        worksheet_one.write_blank(2, i + 1, None, income_format)  # TODO make 14 the total number of transactions or whatever
 
     # close the workbook
     workbook.close()
@@ -293,6 +295,6 @@ test_trans_all = [test_trans_1, test_trans_2, test_trans_3]
 test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
 get_spreadsheet(test_trans_all, test_date_range)
 
-run()
+# run()
 
 # ############## MAIN LOOP ############ #
