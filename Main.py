@@ -316,6 +316,12 @@ def get_spreadsheet(trans_all, date_range):
         worksheet.write(i + len_income + 5, 0, expense_trans[i].category.name, category_row_format)
     worksheet.write(len_expense + len_income + 5, 0, "Total Expenses", expense_total_format)
 
+    # savings header
+    worksheet.write(len_expense + len_income + 6, 0, "Savings", savings_format)
+
+    # percentage savings header
+    worksheet.write(len_expense + len_income + 7, 0, "Percent Savings", percentage_savings_format)
+
     # close the workbook
     workbook.close()
 
