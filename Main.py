@@ -249,6 +249,7 @@ def get_spreadsheet(trans_all, date_range):
     worksheet = workbook.add_worksheet()    # adds a tab
     all_cat = load_cat()
     num_rows = len(all_cat) + 8     # 8 is the number of extra formatting rows
+    num_columns = 14
 
     # separate all income transactions and expense transactions
     income_trans = []
@@ -277,7 +278,8 @@ def get_spreadsheet(trans_all, date_range):
     income_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '46C732'})
     income_total_format = workbook.add_format({'bold': True, 'font_size': 11,
                                                'font_color': 'white', 'bg_color': '46C732'})
-    expense_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': 'F5352E'})
+    expense_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': '1551BA'})
+    expense_total_format = workbook.add_format({'font_size': 11, 'font_color': 'white', 'bg_color': 'F5352E'})
     savings_format = workbook.add_format({'font_size': 11, 'font_color': 'white','bg_color': 'F5AC2E'})
     percentage_savings_format = workbook.add_format({'bold': True, 'num_format': '0.00%', 'font_size': 11,
                                                      'font_color': 'white', 'bg_color': '15BA30'})
@@ -286,7 +288,6 @@ def get_spreadsheet(trans_all, date_range):
 
     # Title
     worksheet.write('A1', "Finances", main_title_format)
-    print(date_range[0])
     worksheet.write_datetime('B1', date_range[0], date_format)
     worksheet.write_datetime('C1', date_range[-1], date_format)
 
@@ -297,13 +298,23 @@ def get_spreadsheet(trans_all, date_range):
 
     # income header
     worksheet.write('A3', "Income", income_format)
-    for i in range(14):
-        worksheet.write_blank(2, i + 1, None, income_format)  # TODO make 14 the total number of transactions or whatever
+    for i in range(num_columns):
+        worksheet.write_blank(2, i + 1, None, income_format)
 
     # income and income total rows
     for i in range(len_income):
         worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
-    worksheet.write(2+len_income, 0, "Income Total", income_total_format)
+    worksheet.write(len_income + 3, 0, "Income Total", income_total_format)
+
+    # expense header
+    worksheet.write(len_income + 4, 0, "Expenses", expense_format)
+    for i in range(num_columns):
+        worksheet.write_blank(len_income + 4, i + 1, None, expense_format)
+
+    # expense and expense total rows
+    for i in range(len_expense):
+        worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
+    worksheet.write(len_expense + len_income + 4, 0, "Total Expenses", expense_total_format)
 
     # close the workbook
     workbook.close()
@@ -312,9 +323,9 @@ def get_spreadsheet(trans_all, date_range):
 # ########TESTS############ #
 
 # # Test data set
-test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "Expense")
-test_trans_2 = Transaction.Transaction("Walmart test crap", 10.99, date(2018, 1, 2), "Expense")
-test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "Expense")
+test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "INCOME")
+test_trans_2 = Transaction.Transaction("Walmart test crap", 10.99, date(2018, 1, 2), "INCOME")
+test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "EXPENSE")
 test_trans_1.category = Category.Category("Food")
 test_trans_2.category = Category.Category("Toiletries")
 test_trans_3.category = Category.Category("Clothes")
