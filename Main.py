@@ -115,7 +115,7 @@ def get_credit(date_range):
 # load on initial script start
 def load_cat():
     print("Loading categories...")
-    categoryFile = open(categories_file, encoding='utf-8', mode='a+')
+    categoryFile = open(categories_file, encoding='utf-8', mode='r')
     categories = []
     for line in categoryFile.readlines():
         categories.append(Category.Category(line))
@@ -242,19 +242,17 @@ def sort_by_date(trans):
 
 
 def get_monthly_totals(month_index, all_trans, all_cat):
-    cat_income_total = []
-    cat_expense_total = []
+    cat_total = []
     for cat in all_cat:
         for trans in all_trans:
             if trans.date.month != month_index:
                 continue
             if trans.category.name == cat:
-                if trans.transaction_type == 'INCOME':
-                    cat_income_total.append(trans.amount)
-                else:
-                    cat_expense_total.append(trans.amount)
+                cat_total.append(trans.amount)
+
     # category totals will appear in the order they are listed in the file
-    return cat_income_total, cat_expense_total
+    return cat_total
+
 
 # make the excel spreadsheet
 def get_spreadsheet(trans_all, date_range):
@@ -338,7 +336,11 @@ def get_spreadsheet(trans_all, date_range):
     worksheet.write(len_expense + len_income + 7, 0, "Percent Savings", percentage_savings_format)
 
     # get monthly data
-
+    # test for january
+    cat1 = get_monthly_totals(1, income_trans, all_cat)
+    print(cat1)
+    for i in cat1:
+        print(i)
 
     # close the workbook
     workbook.close()
