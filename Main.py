@@ -104,7 +104,7 @@ def get_credit(date_range):
             trans_type = 'EXPENSE'
         else:
             trans_type = 'INCOME'
-
+        trans_amount = abs(trans_amount)
         # make transaction and add it to the list
         sorted_credit_trans_classes.append(
             Transaction.Transaction(trans_description, trans_amount, trans_date, trans_type))
@@ -241,6 +241,21 @@ def sort_by_date(trans):
     return trans.date
 
 
+def get_monthly_totals(month_index, all_trans, all_cat):
+    cat_income_total = []
+    cat_expense_total = []
+    for cat in all_cat:
+        for trans in all_trans:
+            if trans.date.month != month_index:
+                continue
+            if trans.category.name == cat:
+                if trans.transaction_type == 'INCOME':
+                    cat_income_total.append(trans.amount)
+                else:
+                    cat_expense_total.append(trans.amount)
+    # category totals will appear in the order they are listed in the file
+    return cat_income_total, cat_expense_total
+
 # make the excel spreadsheet
 def get_spreadsheet(trans_all, date_range):
     # TODO FINISH THIS with xlsxwriter
@@ -321,6 +336,9 @@ def get_spreadsheet(trans_all, date_range):
 
     # percentage savings header
     worksheet.write(len_expense + len_income + 7, 0, "Percent Savings", percentage_savings_format)
+
+    # get monthly data
+
 
     # close the workbook
     workbook.close()
