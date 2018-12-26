@@ -117,7 +117,8 @@ def load_cat():
     print("Loading categories...")
     categoryFile = open(categories_file, encoding='utf-8', mode='r')
     categories = []
-    for line in categoryFile.readlines():
+    for line in categoryFile:
+        line = line.rstrip('\r\n')
         categories.append(Category.Category(line))
     categoryFile.close()
     return categories
@@ -244,11 +245,12 @@ def sort_by_date(trans):
 def get_monthly_totals(month_index, all_trans, all_cat):
     cat_total = []
     for cat in all_cat:
+        temp_total = 0
         for trans in all_trans:
-            if trans.date.month != month_index:
-                continue
-            if trans.category.name == cat:
-                cat_total.append(trans.amount)
+            if trans.date.month == month_index and trans.category.name == cat.name:
+                temp_total += trans.amount
+        if temp_total != 0.00:
+            cat_total.append(temp_total)
 
     # category totals will appear in the order they are listed in the file
     return cat_total
@@ -350,12 +352,14 @@ def get_spreadsheet(trans_all, date_range):
 
 # # Test data set
 test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "INCOME")
-test_trans_2 = Transaction.Transaction("Walmart test crap", 10.99, date(2018, 1, 2), "INCOME")
+test_trans_2 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
+test_trans_4 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
 test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "EXPENSE")
-test_trans_1.category = Category.Category("Food")
-test_trans_2.category = Category.Category("Toiletries")
-test_trans_3.category = Category.Category("Clothes")
-test_trans_all = [test_trans_1, test_trans_2, test_trans_3]
+test_trans_1.category = Category.Category("FOOD")
+test_trans_2.category = Category.Category("TOILETRIES")
+test_trans_4.category = Category.Category("TOILETRIES")
+test_trans_3.category = Category.Category("CLOTHES")
+test_trans_all = [test_trans_1, test_trans_2, test_trans_3, test_trans_4]
 
 test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
 get_spreadsheet(test_trans_all, test_date_range)
