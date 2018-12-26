@@ -339,10 +339,10 @@ def get_spreadsheet(trans_all, date_range):
 
     # get monthly data
     # test for january
-    cat1 = get_monthly_totals(1, income_trans, all_cat)
-    print(cat1)
-    for i in cat1:
-        print(i)
+    jan_income = get_monthly_totals(1, income_trans, all_cat)
+    jan_expense = get_monthly_totals(1, expense_trans, all_cat)
+
+    # TODO add the for loops that will input the data monthly
 
     # close the workbook
     workbook.close()
