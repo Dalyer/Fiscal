@@ -388,12 +388,19 @@ def get_spreadsheet(trans_all, date_range):
         worksheet.write_formula(len_expense + len_income + 5 - income_duplicates - expense_duplicates, i
                                 , '=SUM(%s, %s)' % (start_expense, end_expense), money_format)
 
-    # savings
+    # savings monthly totals
     for i in range(1, 15):
         income_total_cell = cartesian_to_excel(len_income + 3 - income_duplicates, i)
         expense_total_cell = cartesian_to_excel(len_expense + len_income + 5 - income_duplicates - expense_duplicates, i)
         worksheet.write_formula(len_expense + len_income + 6 - income_duplicates - expense_duplicates, i
                                 , '=%s-%s' % (income_total_cell, expense_total_cell), money_format)
+
+    # percent savings
+    for i in range(1, 15):
+        income_total_cell = cartesian_to_excel(len_income + 3 - income_duplicates, i)
+        savings_total_cell = cartesian_to_excel(len_expense + len_income + 6 - income_duplicates - expense_duplicates, i)
+        worksheet.write_formula(len_expense + len_income + 7 - income_duplicates - expense_duplicates, i
+                                , '=%s/%s' % (income_total_cell, savings_total_cell), percentage_savings_format)
     # close the workbook
     workbook.close()
 
