@@ -376,10 +376,17 @@ def get_spreadsheet(trans_all, date_range):
     # TODO WRITE FORMULAS
     # Income totals
     for i in range(1, 15):
-        start_income = cartesian_to_excel(3, i)
+        start_income = cartesian_to_excel(2, i)
         end_income = cartesian_to_excel(len_income + 2 - income_duplicates, i)
         worksheet.write_formula(len_income + 3 - income_duplicates, i
                                 , '=SUM(%s, %s)' % (start_income, end_income), money_format)
+
+    # expense totals
+    for i in range(1, 15):
+        start_expense = cartesian_to_excel(len_income + 4 - income_duplicates, i)
+        end_expense = cartesian_to_excel(len_expense + len_income + 4 - income_duplicates - expense_duplicates, i)
+        worksheet.write_formula(len_expense + len_income + 5 - income_duplicates - expense_duplicates, i
+                                , '=SUM(%s, %s)' % (start_expense, end_expense), money_format)
     # close the workbook
     workbook.close()
 
