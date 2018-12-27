@@ -337,12 +337,16 @@ def get_spreadsheet(trans_all, date_range):
     # percentage savings header
     worksheet.write(len_expense + len_income + 7, 0, "Percent Savings", percentage_savings_format)
 
-    # get monthly data
-    # test for january
-    jan_income = get_monthly_totals(1, income_trans, all_cat)
-    jan_expense = get_monthly_totals(1, expense_trans, all_cat)
-
     # TODO add the for loops that will input the data monthly
+    for month_index in range(1, 12):       # loop month
+        month_income = get_monthly_totals(month_index, income_trans, all_cat)
+        month_expense = get_monthly_totals(month_index, expense_trans, all_cat)
+
+        # display money on the table
+        for i in range(len(month_income)):
+            worksheet.write(i + 3, month_index, month_income[i], money_format)
+        for i in range(len(month_expense)):
+            worksheet.write(i + 3 + len(month_income) + 2, month_index, month_expense[i], money_format)
 
     # close the workbook
     workbook.close()
