@@ -260,6 +260,7 @@ def get_monthly_totals(month_index, all_trans, all_cat):
 def get_spreadsheet(trans_all, date_range):
     # TODO FINISH THIS with xlsxwriter
 
+    print("Generating spreadsheet")
     workbook = xlsxwriter.Workbook('test_worksheet.xlsx')  # creates a new excel file if one by that name doesn't exist
     worksheet = workbook.add_worksheet()    # adds a tab
     all_cat = load_cat()
@@ -317,25 +318,43 @@ def get_spreadsheet(trans_all, date_range):
         worksheet.write_blank(2, i + 1, None, income_format)
 
     # income and income total rows
+    already_pushed = []
+    income_duplicates = 0
     for i in range(len_income):
-        worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
-    worksheet.write(len_income + 3, 0, "Income Total", income_total_format)
+        if income_trans[i].category.name in already_pushed:
+            income_duplicates += 1
+            continue
+        else:
+            worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
+            already_pushed.append(income_trans[i].category.name)
+    worksheet.write(len_income + 3 - income_duplicates, 0, "Income Total", income_total_format)
+    print(len(already_pushed))
 
     # expense header
-    worksheet.write(len_income + 4, 0, "Expenses", expense_format)
+    worksheet.write(len_income + 4 - income_duplicates, 0, "Expenses", expense_format)
     for i in range(num_columns):
-        worksheet.write_blank(len_income + 4, i + 1, None, expense_format)
+        worksheet.write_blank(len_income + 4 - income_duplicates, i + 1, None, expense_format)
 
     # expense and expense total rows
+    already_pushed.clear()
+    expense_duplicates = 0
     for i in range(len_expense):
-        worksheet.write(i + len_income + 5, 0, expense_trans[i].category.name, category_row_format)
-    worksheet.write(len_expense + len_income + 5, 0, "Total Expenses", expense_total_format)
+        if expense_trans[i].category.name in already_pushed:
+            expense_duplicates += 1
+            continue
+        else:
+            worksheet.write(i + len_income + 5 - income_duplicates, 0, expense_trans[i].category.name, category_row_format)
+            already_pushed.append(expense_trans[i].category.name)
+    worksheet.write(len_expense + len_income + 5 - income_duplicates - expense_duplicates, 0
+                    , "Total Expenses", expense_total_format)
 
     # savings header
-    worksheet.write(len_expense + len_income + 6, 0, "Savings", savings_format)
+    worksheet.write(len_expense + len_income + 6 - income_duplicates - expense_duplicates, 0
+                    , "Savings", savings_format)
 
     # percentage savings header
-    worksheet.write(len_expense + len_income + 7, 0, "Percent Savings", percentage_savings_format)
+    worksheet.write(len_expense + len_income + 7 - income_duplicates - expense_duplicates, 0
+                    , "Percent Savings", percentage_savings_format)
 
     # TODO add the for loops that will input the data monthly
     for month_index in range(1, 12):       # loop month
