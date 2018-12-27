@@ -256,6 +256,13 @@ def get_monthly_totals(month_index, all_trans, all_cat):
     return cat_total
 
 
+def cartesian_to_excel(row, col):
+    alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'
+                , 'Q', 'R']
+    cartesian_coords = alpha[col] + str(row + 1)
+    return cartesian_coords
+
+
 # make the excel spreadsheet
 def get_spreadsheet(trans_all, date_range):
     # TODO FINISH THIS with xlsxwriter
@@ -328,7 +335,6 @@ def get_spreadsheet(trans_all, date_range):
             worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
             already_pushed.append(income_trans[i].category.name)
     worksheet.write(len_income + 3 - income_duplicates, 0, "Income Total", income_total_format)
-    print(len(already_pushed))
 
     # expense header
     worksheet.write(len_income + 4 - income_duplicates, 0, "Expenses", expense_format)
@@ -343,7 +349,8 @@ def get_spreadsheet(trans_all, date_range):
             expense_duplicates += 1
             continue
         else:
-            worksheet.write(i + len_income + 5 - income_duplicates, 0, expense_trans[i].category.name, category_row_format)
+            worksheet.write(i + len_income + 5 - income_duplicates, 0
+                            , expense_trans[i].category.name, category_row_format)
             already_pushed.append(expense_trans[i].category.name)
     worksheet.write(len_expense + len_income + 5 - income_duplicates - expense_duplicates, 0
                     , "Total Expenses", expense_total_format)
@@ -356,7 +363,6 @@ def get_spreadsheet(trans_all, date_range):
     worksheet.write(len_expense + len_income + 7 - income_duplicates - expense_duplicates, 0
                     , "Percent Savings", percentage_savings_format)
 
-    # TODO add the for loops that will input the data monthly
     for month_index in range(1, 12):       # loop month
         month_income = get_monthly_totals(month_index, income_trans, all_cat)
         month_expense = get_monthly_totals(month_index, expense_trans, all_cat)
@@ -367,6 +373,13 @@ def get_spreadsheet(trans_all, date_range):
         for i in range(len(month_expense)):
             worksheet.write(i + 3 + len(month_income) + 2, month_index, month_expense[i], money_format)
 
+    # TODO WRITE FORMULAS
+    # Income totals
+    for i in range(1, 15):
+        start_income = cartesian_to_excel(3, i)
+        end_income = cartesian_to_excel(len_income + 2 - income_duplicates, i)
+        worksheet.write_formula(len_income + 3 - income_duplicates, i
+                                , '=SUM(%s, %s)' % (start_income, end_income), money_format)
     # close the workbook
     workbook.close()
 
