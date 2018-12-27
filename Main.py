@@ -373,7 +373,6 @@ def get_spreadsheet(trans_all, date_range):
         for i in range(len(month_expense)):
             worksheet.write(i + 3 + len(month_income) + 2, month_index, month_expense[i], money_format)
 
-    # TODO WRITE FORMULAS
     # Income totals
     for i in range(1, 15):
         start_income = cartesian_to_excel(2, i)
@@ -403,6 +402,9 @@ def get_spreadsheet(trans_all, date_range):
                                                 , i)
         worksheet.write_formula(len_expense + len_income + 7 - income_duplicates - expense_duplicates, i
                                 , '=%s/%s' % (income_total_cell, savings_total_cell), percentage_savings_format)
+
+    # TODO create the graphs
+
     # close the workbook
     workbook.close()
 
