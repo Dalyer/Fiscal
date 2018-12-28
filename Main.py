@@ -217,7 +217,8 @@ def run():
         else:
             # get user input on what category it should be
             user_input = input("What category should the following "
-                               "transaction be filed under: %s\n> " % transaction.description)
+                               "transaction be filed under: %s | %s\n> "
+                               % (transaction.description, transaction.transaction_type))
             user_input = user_input.upper()
             if user_input not in all_cat:
                 transaction.category = Category.Category(user_input)
@@ -237,20 +238,22 @@ def run():
     print("All transactions with categories saved")
     allTransFile.close()
 
+    get_spreadsheet(all_trans, generated_date_range)
+
 
 def sort_by_date(trans):
     return trans.date
 
 
 def get_monthly_totals(month_index, all_trans, all_cat):
-    cat_total = []
+    cat_total = {}
     for cat in all_cat:
-        temp_total = 0
         for trans in all_trans:
             if trans.date.month == month_index and trans.category.name == cat.name:
-                temp_total += trans.amount
-        if temp_total != 0.00:
-            cat_total.append(temp_total)
+                if trans.category.name in cat_total.keys():
+                    cat_total[trans.category.name] += trans.amount
+                else:
+                    cat_total[trans.category.name] = trans.amount
 
     # category totals will appear in the order they are listed in the file
     return cat_total
@@ -271,6 +274,9 @@ def get_spreadsheet(trans_all, date_range):
     workbook = xlsxwriter.Workbook('test_worksheet.xlsx')  # creates a new excel file if one by that name doesn't exist
     worksheet = workbook.add_worksheet()    # adds a tab
     all_cat = load_cat()
+    all_cat_dict = {}
+    for cat in all_cat:
+        all_cat_dict[cat] = 0
     num_rows = len(all_cat) + 8     # 8 is the number of extra formatting rows
     num_columns = 14
 
@@ -285,9 +291,25 @@ def get_spreadsheet(trans_all, date_range):
         else:
             print("An error has occurred (get_spreadsheet)")
 
-    # get the size of the data
-    len_income = len(income_trans)
-    len_expense = len(expense_trans)
+    # get income_cat
+    already_pushed = []
+    income_cat = {}
+    for trans in income_trans:
+        if trans.category.name not in already_pushed:
+            income_cat[trans.category.name] = 0
+            already_pushed.append(trans.category.name)
+
+    # get expense_cat
+    expense_cat = {}
+    already_pushed.clear()
+    for trans in expense_trans:
+        if trans.category.name not in already_pushed:
+            expense_cat[trans.category.name] = 0
+            already_pushed.append(trans.category.name)
+
+    # get lengths
+    len_income = len(income_cat)
+    len_expense = len(expense_cat)
 
     # set column and row widths and heights TODO make this done by indexing by the total number of transactions
     worksheet.set_column('A:A', 18)     # title column
@@ -324,85 +346,83 @@ def get_spreadsheet(trans_all, date_range):
     for i in range(num_columns):
         worksheet.write_blank(2, i + 1, None, income_format)
 
-    # income and income total rows
-    already_pushed = []
-    income_duplicates = 0
-    for i in range(len_income):
-        if income_trans[i].category.name in already_pushed:
-            income_duplicates += 1
-            continue
-        else:
-            worksheet.write(i + 3, 0, income_trans[i].category.name, category_row_format)
-            already_pushed.append(income_trans[i].category.name)
-    worksheet.write(len_income + 3 - income_duplicates, 0, "Income Total", income_total_format)
+    # income rows
+    index = 0
+    print(income_cat)
+    for key in income_cat:
+        worksheet.write(index + 3, 0, key, category_row_format)
+        index += 1
+    # income total
+    worksheet.write(len_income + 3, 0, "Income Total", income_total_format)
 
     # expense header
-    worksheet.write(len_income + 4 - income_duplicates, 0, "Expenses", expense_format)
+    worksheet.write(len_income + 4, 0, "Expenses", expense_format)
     for i in range(num_columns):
-        worksheet.write_blank(len_income + 4 - income_duplicates, i + 1, None, expense_format)
+        worksheet.write_blank(len_income, i + 1, None, expense_format)
 
-    # expense and expense total rows
+    # expense rows
     already_pushed.clear()
-    expense_duplicates = 0
-    for i in range(len_expense):
-        if expense_trans[i].category.name in already_pushed:
-            expense_duplicates += 1
-            continue
-        else:
-            worksheet.write(i + len_income + 5 - income_duplicates, 0
-                            , expense_trans[i].category.name, category_row_format)
-            already_pushed.append(expense_trans[i].category.name)
-    worksheet.write(len_expense + len_income + 5 - income_duplicates - expense_duplicates, 0
+    index = 0
+    for key in expense_cat:
+        worksheet.write(index + len_income + 5, 0, key, category_row_format)
+        index += 1
+
+    # expense total
+    worksheet.write(len_expense + len_income + 5, 0
                     , "Total Expenses", expense_total_format)
 
     # savings header
-    worksheet.write(len_expense + len_income + 6 - income_duplicates - expense_duplicates, 0
+    worksheet.write(len_expense + len_income + 6, 0
                     , "Savings", savings_format)
 
     # percentage savings header
-    worksheet.write(len_expense + len_income + 7 - income_duplicates - expense_duplicates, 0
+    worksheet.write(len_expense + len_income + 7, 0
                     , "Percent Savings", percentage_savings_format)
 
+    # get monthly category totals
     for month_index in range(1, 12):       # loop month
         month_income = get_monthly_totals(month_index, income_trans, all_cat)
         month_expense = get_monthly_totals(month_index, expense_trans, all_cat)
 
-        # display money on the table
-        for i in range(len(month_income)):
-            worksheet.write(i + 3, month_index, month_income[i], money_format)
-        for i in range(len(month_expense)):
-            worksheet.write(i + 3 + len(month_income) + 2, month_index, month_expense[i], money_format)
-
+        # display money on the table TODO sort the categories before displaying them
+        num_keys = 0
+        for key in month_income:
+            worksheet.write(num_keys + 3, month_index, month_income[key], money_format)
+            num_keys += 1
+        num_keys = 0
+        for key in month_expense:
+            worksheet.write(num_keys + 3 + len(month_income) + 2, month_index, month_expense[key], money_format)
+            num_keys += 1
     # Income totals
     for i in range(1, 15):
         start_income = cartesian_to_excel(2, i)
-        end_income = cartesian_to_excel(len_income + 2 - income_duplicates, i)
-        worksheet.write_formula(len_income + 3 - income_duplicates, i
-                                , '=SUM(%s, %s)' % (start_income, end_income), income_total_format)
+        end_income = cartesian_to_excel(len_income + 2, i)
+        worksheet.write_formula(len_income + 3, i
+                                , '=SUM(%s:%s)' % (start_income, end_income), income_total_format)
 
     # expense totals
     for i in range(1, 15):
-        start_expense = cartesian_to_excel(len_income + 4 - income_duplicates, i)
-        end_expense = cartesian_to_excel(len_expense + len_income + 4 - income_duplicates - expense_duplicates, i)
-        worksheet.write_formula(len_expense + len_income + 5 - income_duplicates - expense_duplicates, i
-                                , '=SUM(%s, %s)' % (start_expense, end_expense), expense_total_format)
+        start_expense = cartesian_to_excel(len_income + 4, i)
+        end_expense = cartesian_to_excel(len_expense + len_income + 4, i)
+        worksheet.write_formula(len_expense + len_income + 5, i
+                                , '=SUM(%s:%s)' % (start_expense, end_expense), expense_total_format)
 
     # savings monthly totals
     for i in range(1, 15):
-        income_total_cell = cartesian_to_excel(len_income + 3 - income_duplicates, i)
-        expense_total_cell = cartesian_to_excel(len_expense + len_income + 5 - income_duplicates - expense_duplicates
+        income_total_cell = cartesian_to_excel(len_income + 3, i)
+        expense_total_cell = cartesian_to_excel(len_expense + len_income + 5
                                                 , i)
-        worksheet.write_formula(len_expense + len_income + 6 - income_duplicates - expense_duplicates, i
+        worksheet.write_formula(len_expense + len_income + 6, i
                                 , '=%s-%s' % (income_total_cell, expense_total_cell), savings_format)
 
     # percent savings
     for i in range(1, 15):
-        income_total_cell = cartesian_to_excel(len_income + 3 - income_duplicates, i)
-        savings_total_cell = cartesian_to_excel(len_expense + len_income + 6 - income_duplicates - expense_duplicates
+        income_total_cell = cartesian_to_excel(len_income + 3, i)
+        savings_total_cell = cartesian_to_excel(len_expense + len_income + 6
                                                 , i)
-        worksheet.write_formula(len_expense + len_income + 7 - income_duplicates - expense_duplicates, i
+        worksheet.write_formula(len_expense + len_income + 7, i
                                 , '=%s/%s' % (income_total_cell, savings_total_cell), percentage_savings_format)
-
+    # TODO CALCULATE THE MONTHLY YEARLY AVERAGES
     # TODO create the graphs
 
     # close the workbook
