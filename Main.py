@@ -358,10 +358,9 @@ def get_spreadsheet(trans_all, date_range):
     # expense header
     worksheet.write(len_income + 4, 0, "Expenses", expense_format)
     for i in range(num_columns):
-        worksheet.write_blank(len_income, i + 1, None, expense_format)
+        worksheet.write_blank(len_income + 4, i + 1, None, expense_format)
 
     # expense rows
-    already_pushed.clear()
     index = 0
     for key in expense_cat:
         worksheet.write(index + len_income + 5, 0, key, category_row_format)
@@ -380,7 +379,7 @@ def get_spreadsheet(trans_all, date_range):
                     , "Percent Savings", percentage_savings_format)
 
     # get monthly category totals
-    for month_index in range(1, 12):       # loop month
+    for month_index in range(1, 12):       # loop month TODO fix
         month_income = get_monthly_totals(month_index, income_trans, all_cat)
         month_expense = get_monthly_totals(month_index, expense_trans, all_cat)
 
