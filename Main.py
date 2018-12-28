@@ -245,18 +245,14 @@ def sort_by_date(trans):
     return trans.date
 
 
-def get_monthly_totals(month_index, all_trans, all_cat):
-    cat_total = {}
-    for cat in all_cat:
+def get_monthly_totals(month_index, all_trans, cat):
+    for key in cat:
         for trans in all_trans:
-            if trans.date.month == month_index and trans.category.name == cat.name:
-                if trans.category.name in cat_total.keys():
-                    cat_total[trans.category.name] += trans.amount
-                else:
-                    cat_total[trans.category.name] = trans.amount
+            if trans.date.month == month_index and trans.category.name == key:
+                cat[key] += trans.amount
 
     # category totals will appear in the order they are listed in the file
-    return cat_total
+    return cat
 
 
 def cartesian_to_excel(row, col):
@@ -348,7 +344,6 @@ def get_spreadsheet(trans_all, date_range):
 
     # income rows
     index = 0
-    print(income_cat)
     for key in income_cat:
         worksheet.write(index + 3, 0, key, category_row_format)
         index += 1
@@ -379,11 +374,11 @@ def get_spreadsheet(trans_all, date_range):
                     , "Percent Savings", percentage_savings_format)
 
     # get monthly category totals
-    for month_index in range(1, 12):       # loop month TODO fix
-        month_income = get_monthly_totals(month_index, income_trans, all_cat)
-        month_expense = get_monthly_totals(month_index, expense_trans, all_cat)
+    for month_index in range(1, 13):       # loop month TODO fix
+        month_income = get_monthly_totals(month_index, income_trans, income_cat)
+        month_expense = get_monthly_totals(month_index, expense_trans, expense_cat)
 
-        # display money on the table TODO sort the categories before displaying them
+        # display money on the table
         num_keys = 0
         for key in month_income:
             worksheet.write(num_keys + 3, month_index, month_income[key], money_format)
@@ -392,6 +387,8 @@ def get_spreadsheet(trans_all, date_range):
         for key in month_expense:
             worksheet.write(num_keys + 3 + len(month_income) + 2, month_index, month_expense[key], money_format)
             num_keys += 1
+        month_income.clear()
+        month_expense.clear()
     # Income totals
     for i in range(1, 15):
         start_income = cartesian_to_excel(2, i)
