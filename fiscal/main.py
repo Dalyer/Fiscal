@@ -9,7 +9,7 @@ from datetime import date
 import datetime
 import xlsxwriter
 
-############## INFORMATION ###################
+# ############# INFORMATION ###################
 DEBIT_FILE_NAME = 'debit_test.csv'
 CREDIT_FILE_NAME = 'credit_test.csv'
 CATEGORY_FILE_NAME = 'categories.txt'
