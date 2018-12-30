@@ -3,8 +3,8 @@
 """This is where the magic happens. """
 
 import os
-import Transaction
-import Category
+from fiscal import Transaction
+from fiscal import Category
 from datetime import date
 import datetime
 import xlsxwriter
@@ -264,10 +264,10 @@ def cartesian_to_excel(row, col):
 
 # make the excel spreadsheet
 def get_spreadsheet(trans_all, date_range):
-    # TODO FINISH THIS with xlsxwriter
 
+    output_name = "Finances " + str(date_range[0]) + ' to ' + str(date_range[-1])
     print("Generating spreadsheet")
-    workbook = xlsxwriter.Workbook('test_worksheet.xlsx')  # creates a new excel file if one by that name doesn't exist
+    workbook = xlsxwriter.Workbook('%s.xlsx' % output_name)
     worksheet = workbook.add_worksheet()    # adds a tab
     all_cat = load_cat()
     all_cat_dict = {}
@@ -447,7 +447,7 @@ test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1
 test_trans_2 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
 test_trans_4 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
 test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "EXPENSE")
-test_trans_1.category = Category.Category("FOOD")
+test_trans_1.category = Category.Category("FOOOD")
 test_trans_2.category = Category.Category("TOILETRIES")
 test_trans_4.category = Category.Category("TOILETRIES")
 test_trans_3.category = Category.Category("CLOTHES")
