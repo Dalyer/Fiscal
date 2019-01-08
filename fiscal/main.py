@@ -65,7 +65,6 @@ def get_debit(date_range):
         # find the trans_amount
         trans_description = line[1]
         if trans_description[:6] == 'BMO MC':
-            print('###########')
             continue
         # find the trans_amount (fix this its terrible)
         if line[2] != '':
@@ -225,9 +224,9 @@ def run():
             print("Category already found automatically")
         else:
             # get user input on what category it should be
-            user_input = input("What category should the following "
-                               "transaction be filed under: %s | %s\n> "
-                               % (transaction.description, transaction.transaction_type))
+            user_input = input("Categorize the following: %s | %s | %s | %s \n> "
+                               % (transaction.description, transaction.date,
+                                  transaction.amount, transaction.transaction_type))
             user_input = user_input.upper()
             if user_input not in all_cat:
                 transaction.category = Category.Category(user_input)
@@ -256,6 +255,7 @@ def sort_by_date(trans):
 
 def get_monthly_totals(month_index, all_trans, cat):
     for key in cat:
+        cat[key] = 0
         for trans in all_trans:
             if trans.date.month == month_index and trans.category.name == key:
                 cat[key] += trans.amount
@@ -396,8 +396,8 @@ def get_spreadsheet(trans_all, date_range):
         for key in month_expense:
             worksheet.write(num_keys + 3 + len(month_income) + 2, month_index, month_expense[key], money_format)
             num_keys += 1
-        month_income.clear()
-        month_expense.clear()
+        # month_income.clear()
+        # month_expense.clear()
 
     # Income totals
     for i in range(1, 15):
