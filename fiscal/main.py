@@ -399,8 +399,7 @@ def get_spreadsheet(trans_all, date_range):
             num_keys += 1
         month_income.clear()
         month_expense.clear()
-    # TODO add a data base that stores each months data so that it can be nicely organized and graphed
-    # TODO like a dictionary of a dictionary
+
     # Income totals
     for i in range(1, 15):
         start_income = cartesian_to_excel(2, i)
