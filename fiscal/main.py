@@ -1,6 +1,5 @@
-# Main.py
+# main.py
 
-"""This is where the magic happens. """
 
 import os
 from fiscal import Transaction
@@ -442,7 +441,7 @@ def get_spreadsheet(trans_all, date_range):
             worksheet.write_formula(i, 13, '=SUM(%s:%s)' % (start, end), expense_total_format)
         else:
             worksheet.write_formula(i, 13, '=SUM(%s:%s)' % (start, end), money_format)
-    # TODO CALCULATE THE MONTHLY YEARLY AVERAGES
+
     # monthly averages
     for i in range(3, len_expense + len_income + 6):
         start = cartesian_to_excel(i, 0)
@@ -479,4 +478,4 @@ def get_spreadsheet(trans_all, date_range):
 
 run()
 clear_cat()
-# ############## MAIN LOOP ############ #
+
