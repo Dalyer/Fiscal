@@ -138,6 +138,11 @@ def update_cat(cat_arr, new_cat):
         return cat_arr
 
 
+def clear_cat():
+    categoryFile = open(categories_file, encoding='utf-8', mode='a+')
+    categoryFile.truncate(0)
+
+
 def run():
     print("Starting...")
     all_cat = load_cat()
@@ -443,19 +448,19 @@ def get_spreadsheet(trans_all, date_range):
 # ########TESTS############ #
 
 # # Test data set
-test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "INCOME")
-test_trans_2 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
-test_trans_4 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
-test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "EXPENSE")
-test_trans_1.category = Category.Category("FOOOD")
-test_trans_2.category = Category.Category("TOILETRIES")
-test_trans_4.category = Category.Category("TOILETRIES")
-test_trans_3.category = Category.Category("CLOTHES")
-test_trans_all = [test_trans_1, test_trans_2, test_trans_3, test_trans_4]
+# test_trans_1 = Transaction.Transaction("Mcdonalds Burger", 5.50, date(2018, 1, 1), "INCOME")
+# test_trans_2 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
+# test_trans_4 = Transaction.Transaction("Walmart test crap", 11, date(2018, 1, 2), "INCOME")
+# test_trans_3 = Transaction.Transaction("New shoes!", 78.98, date(2018, 1, 3), "EXPENSE")
+# test_trans_1.category = Category.Category("FOOOD")
+# test_trans_2.category = Category.Category("TOILETRIES")
+# test_trans_4.category = Category.Category("TOILETRIES")
+# test_trans_3.category = Category.Category("CLOTHES")
+# test_trans_all = [test_trans_1, test_trans_2, test_trans_3, test_trans_4]
+#
+# test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
+# get_spreadsheet(test_trans_all, test_date_range)
 
-test_date_range = [date(2018, 1, 1), date(2018, 1, 2), date(2018, 1, 3)]
-get_spreadsheet(test_trans_all, test_date_range)
-
-# run()
-
+run()
+clear_cat()
 # ############## MAIN LOOP ############ #
