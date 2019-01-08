@@ -443,6 +443,18 @@ def get_spreadsheet(trans_all, date_range):
         else:
             worksheet.write_formula(i, 13, '=SUM(%s:%s)' % (start, end), money_format)
     # TODO CALCULATE THE MONTHLY YEARLY AVERAGES
+    # monthly averages
+    for i in range(3, len_expense + len_income + 6):
+        start = cartesian_to_excel(i, 0)
+        end = cartesian_to_excel(i, 12)
+        if i == len_income + 3:
+            worksheet.write_formula(i, 14, '=AVERAGE(%s:%s)' % (start, end), income_total_format)
+        elif i == len_income + 4:
+            continue
+        elif i == len_expense + len_income + 5:
+            worksheet.write_formula(i, 14, '=AVERAGE(%s:%s)' % (start, end), expense_total_format)
+        else:
+            worksheet.write_formula(i, 14, '=AVERAGE(%s:%s)' % (start, end), money_format)
     # TODO create the graphs
 
     # close the workbook
