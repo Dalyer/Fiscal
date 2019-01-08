@@ -65,6 +65,9 @@ def get_debit(date_range):
             continue
         # find the trans_amount
         trans_description = line[1]
+        if trans_description[:6] == 'BMO MC':
+            print('###########')
+            continue
         # find the trans_amount (fix this its terrible)
         if line[2] != '':
             trans_amount = float(line[2])
@@ -85,7 +88,7 @@ def get_credit(date_range):
     sorted_credit_transactions = []
     for line in unsorted_credit_transactions:
         clean_line = [i.strip() for i in line.split(',')]
-    sorted_credit_transactions.append(clean_line)
+        sorted_credit_transactions.append(clean_line)
     # dates are sorted month day year
     # mastercard displays, as Item #,Card #,Transaction Date,Posting Date,Transaction Amount,Description
     sorted_credit_trans_classes = []
@@ -98,6 +101,8 @@ def get_credit(date_range):
             continue
         # find the trans_description
         trans_description = line[5]  # fix this later so that its a proper category class
+        if trans_description == 'PAYMENTRECEIVED-THANKYOU--' or trans_description == 'PAYMENTRECEIVED-THANKYOU':
+            continue        # skip mastercard payments
         # find the trans_amount (fix this its terrible)
         trans_amount = float(line[4])
         if trans_amount >= 0:
