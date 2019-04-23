@@ -99,7 +99,7 @@ def get_credit(date_range):
             continue
         # find the trans_description
         trans_description = line[5]  # fix this later so that its a proper category class
-        if trans_description == 'PAYMENTRECEIVED-THANKYOU--' or trans_description == 'PAYMENTRECEIVED-THANKYOU':
+        if trans_description == 'PAYMENTRECEIVED-THANKYOU--' or trans_description == 'PAYMENTRECEIVED-THANKYOU' or trans_description == 'PAYMENT RECEIVED - THANK YOU':
             continue        # skip mastercard payments
         # find the trans_amount (fix this its terrible)
         trans_amount = float(line[4])
@@ -427,7 +427,7 @@ def get_spreadsheet(trans_all, date_range):
         savings_total_cell = cartesian_to_excel(len_expense + len_income + 6
                                                 , i)
         worksheet.write_formula(len_expense + len_income + 7, i
-                                , '=%s/%s' % (income_total_cell, savings_total_cell), percentage_savings_format)
+                                , '=%s/%s' % (savings_total_cell, income_total_cell), percentage_savings_format)
 
     # yearly total
     for i in range(3, len_expense + len_income + 6):
